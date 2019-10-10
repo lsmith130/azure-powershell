@@ -55,7 +55,7 @@ function Test-CustomDomainGetRemoveWithRunningEndpoint
     Assert-ThrowsContains { Remove-AzCdnCustomDomain -CustomDomainName $customDomainName -EndpointName $endpointName -ProfileName $profileName -ResourceGroupName $resourceGroup.ResourceGroupName } "does not exist"
 
     Assert-ThrowsContains { Get-AzCdnCustomDomain -CustomDomainName $customDomainName -EndpointName $endpointName -ProfileName $profileName -ResourceGroupName $resourceGroup.ResourceGroupName } "NotFound"
-
+	
     Remove-AzResourceGroup -Name $resourceGroup.ResourceGroupName -Force
 }
 
@@ -193,6 +193,46 @@ function Test-CustomDomainEnableHttpsWithRunningEndpoint
     Assert-AreEqual $hostName $customDomain.HostName
 
     $enabled = $customDomain | Enable-AzCdnCustomDomainHttps -PassThru
+    Assert-True{$enabled}
+
+    $customDomain = Get-AzCdnCustomDomain -CustomDomainName $customDomainName -EndpointName $endpointName -ProfileName $profileName -ResourceGroupName $resourceGroup.ResourceGroupName
+
+    Assert-AreEqual $customDomain.CustomHttpsProvisioningState "Enabling"
+
+    Assert-ThrowsContains { $customDomain | Enable-AzCdnCustomDomainHttps } "BadRequest"
+
+    Assert-ThrowsContains {  $customDomain | Disable-AzCdnCustomDomainHttps } "BadRequest"
+
+    Remove-AzureRmResourceGroup -Name $resourceGroup.ResourceGroupName -Force
+}
+
+<#
+.SYNOPSIS
+Enable Https for custom domain using a user-managed certificate.
+#>
+function Test-CustomDomainBYOC
+{
+  # Hard-coding host and endpoint names due to requirement for DNS CNAME
+    $endpointName = "testVerizonEP"
+    $hostName = "testVerizon.dustydog.us"
+
+    $customDomainName = getAssetName
+
+    $profileName = getAssetName
+    $resourceGroup = TestSetup-CreateResourceGroup
+    $resourceLocation = "EastUS"
+    $profileSku = "Standard_Akamai"
+    $tags = @{"tag1" = "value1"; "tag2" = "value2"}
+    $profile = New-AzCdnProfile -ProfileName $profileName -ResourceGroupName $resourceGroup.ResourceGroupName -Location $resourceLocation -Sku $profileSku -Tag $tags
+
+    $originName = getAssetName
+    $originHostName = "www.microsoft.com"
+    $endpoint = New-AzCdnEndpoint -EndpointName $endpointName -ProfileName $profileName -ResourceGroupName $resourceGroup.ResourceGroupName -Location $resourceLocation -OriginName $originName -OriginHostName $originHostName
+    $customDomain = New-AzCdnCustomDomain -HostName $hostName -CustomDomainName $customDomainName -EndpointName $endpointName -ProfileName $profileName -ResourceGroupName $resourceGroup.ResourceGroupName
+
+	  $certName getAssetName
+
+    $enabled = $customDomain | Enable-AzCdnCustomDomainHttps -UserManagedKeyVaultCertificateSecretId $cert.SecretId -PassThru
     Assert-True{$enabled}
 
     $customDomain = Get-AzCdnCustomDomain -CustomDomainName $customDomainName -EndpointName $endpointName -ProfileName $profileName -ResourceGroupName $resourceGroup.ResourceGroupName

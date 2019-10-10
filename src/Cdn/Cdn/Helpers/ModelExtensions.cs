@@ -37,6 +37,11 @@ using SdkEndpoint = Microsoft.Azure.Management.Cdn.Models.Endpoint;
 using SdkQueryStringCachingBehavior = Microsoft.Azure.Management.Cdn.Models.QueryStringCachingBehavior;
 using SdkOrigin = Microsoft.Azure.Management.Cdn.Models.Origin;
 using SdkCustomDomain = Microsoft.Azure.Management.Cdn.Models.CustomDomain;
+using SdkCustomDomainHttpsParameters = Microsoft.Azure.Management.Cdn.Models.CustomDomainHttpsParameters;
+using SdkCdnManagedHttpsParameters = Microsoft.Azure.Management.Cdn.Models.CdnManagedHttpsParameters;
+using SdkUserManagedHttpsParameters = Microsoft.Azure.Management.Cdn.Models.UserManagedHttpsParameters;
+using SdkCdnCertificateSourceParameters = Microsoft.Azure.Management.Cdn.Models.CdnCertificateSourceParameters;
+using SdkKeyVaultCertificateSourceParameters = Microsoft.Azure.Management.Cdn.Models.KeyVaultCertificateSourceParameters;
 using SdkGeoFilter = Microsoft.Azure.Management.Cdn.Models.GeoFilter;
 using SdkGeoFilterAction = Microsoft.Azure.Management.Cdn.Models.GeoFilterActions;
 using SdkDeliveryPolicy = Microsoft.Azure.Management.Cdn.Models.EndpointPropertiesUpdateParametersDeliveryPolicy;
@@ -638,7 +643,7 @@ namespace Microsoft.Azure.Commands.Cdn.Helpers
             Debug.Assert(customDomain.ProvisioningState != null, "customDomain.ProvisioningState != null");
             Debug.Assert(customDomain.ResourceState != null, "customDomain.ResourceState != null");
 
-            return new PSCustomDomain
+            var result = new PSCustomDomain
             {
                 Id = customDomain.Id,
                 Name = customDomain.Name,
@@ -646,10 +651,40 @@ namespace Microsoft.Azure.Commands.Cdn.Helpers
                 ProvisioningState = (PSProvisioningState)Enum.Parse(typeof(PSProvisioningState), customDomain.ProvisioningState),
                 CustomHttpsProvisioningState = (PSCustomHttpsProvisioningState)Enum.Parse(typeof(PSCustomHttpsProvisioningState), customDomain.CustomHttpsProvisioningState),
                 CustomHttpsProvisioningSubstate = (PSCustomHttpsProvisioningSubstate)Enum.Parse(typeof(PSCustomHttpsProvisioningSubstate), customDomain.CustomHttpsProvisioningSubstate),
+                CustomHttpsCertProtocolType = customDomain.CustomHttpsParameters == null ? PSCertificateProtocolType.None : (PSCertificateProtocolType)Enum.Parse(typeof(PSCertificateProtocolType), customDomain.CustomHttpsParameters.ProtocolType),
+                CustomHttpsCertSource = customDomain.CustomHttpsParameters.GetPsCertificateSource(),
                 ResourceState = (PSCustomDomainResourceState)Enum.Parse(typeof(PSCustomDomainResourceState), customDomain.ResourceState),
                 HostName = customDomain.HostName,
                 ValidationData = customDomain.ValidationData
             };
+
+            switch (customDomain.CustomHttpsParameters) {
+                case SdkCdnManagedHttpsParameters cdnManagedParams:
+                    result.CustomHttpsCdnManagedCertType = (PSCertificateType)Enum.Parse(typeof(PSCertificateType), cdnManagedParams.CertificateSourceParameters.CertificateType);
+                    break;
+                case SdkUserManagedHttpsParameters userManagedParams:
+                    result.CustomHttpsUserManagedCertSubscriptionId = userManagedParams.CertificateSourceParameters.SubscriptionId;
+                    result.CustomHttpsUserManagedCertResourceGroupName = userManagedParams.CertificateSourceParameters.ResourceGroupName;
+                    result.CustomHttpsUserManagedCertKeyVaultName = userManagedParams.CertificateSourceParameters.VaultName;
+                    result.CustomHttpsUserManagedCertSecretName = userManagedParams.CertificateSourceParameters.SecretName;
+                    result.CustomHttpsUserManagedCertSecretVersion = userManagedParams.CertificateSourceParameters.SecretVersion;
+                    break;
+            }
+
+            return result;
+        }
+
+        public static PSCertificateSource GetPsCertificateSource(this SdkCustomDomainHttpsParameters httpsParams)
+        {
+            switch (httpsParams)
+            {
+                case SdkCdnManagedHttpsParameters _:
+                    return PSCertificateSource.Cdn;
+                case SdkUserManagedHttpsParameters _:
+                    return PSCertificateSource.AzureKeyVault;
+                default:
+                    return PSCertificateSource.None;
+            }
         }
 
         public static IDictionary<string, string> ToDictionaryTags(this Hashtable table)

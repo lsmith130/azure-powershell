@@ -160,6 +160,24 @@ namespace Microsoft.Azure.Commands.Cdn.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to UserManagedCertSecretId is invalid..
+        /// </summary>
+        internal static string Error_InvalidCertSecretId {
+            get {
+                return ResourceManager.GetString("Error_InvalidCertSecretId", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to KeyVaultResourceId &apos;{0}&apos; is invalid..
+        /// </summary>
+        internal static string Error_InvalidKeyVaultResourceId {
+            get {
+                return ResourceManager.GetString("Error_InvalidKeyVaultResourceId", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Custom domain with name &apos;{0}&apos; in the endpoint &apos;{1}&apos;,profile &apos;{2}&apos;, resource group &apos;{3}&apos; does not exist..
         /// </summary>
         internal static string Error_NonExistingCustomDomain {
@@ -183,6 +201,15 @@ namespace Microsoft.Azure.Commands.Cdn.Properties {
         internal static string Error_ResourceGroupNotSpecified {
             get {
                 return ResourceManager.GetString("Error_ResourceGroupNotSpecified", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to UserManagedCertificateSubscriptionId was not specified..
+        /// </summary>
+        internal static string Error_UserManagedCertificateSubscriptionIdNotSpecified {
+            get {
+                return ResourceManager.GetString("Error_UserManagedCertificateSubscriptionIdNotSpecified", resourceCulture);
             }
         }
         

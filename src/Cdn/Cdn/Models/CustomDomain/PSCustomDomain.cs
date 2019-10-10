@@ -37,6 +37,21 @@ namespace Microsoft.Azure.Commands.Cdn.Models.CustomDomain
 
         public PSCustomHttpsProvisioningSubstate CustomHttpsProvisioningSubstate { get; set; }
 
+        public PSCertificateSource CustomHttpsCertSource { get; set; }
+        
+        public PSCertificateProtocolType CustomHttpsCertProtocolType { get; set; }
+        
+        public PSCertificateType CustomHttpsCdnManagedCertType { get; set; }
+
+        public string CustomHttpsUserManagedCertSubscriptionId { get; set; }
+
+        public string CustomHttpsUserManagedCertResourceGroupName { get; set; }
+
+        public string CustomHttpsUserManagedCertKeyVaultName { get; set; }
+
+        public string CustomHttpsUserManagedCertSecretName { get; set; }
+
+        public string CustomHttpsUserManagedCertSecretVersion { get; set; }
 
         public string ResourceGroupName
         {

@@ -19,16 +19,37 @@ Enable-AzCdnCustomDomainHttps -ResourceGroupName <String> -ProfileName <String> 
  [<CommonParameters>]
 ```
 
+### ByFieldsUserManagedParameterSet
+```
+Enable-AzCdnCustomDomainHttps -ResourceGroupName <String> -ProfileName <String> -EndpointName <String>
+ -CustomDomainName <String> -UserManagedCertKeyVaultResourceId <String> -UserManagedCertSecretId <String>
+ [-PassThru] [-DefaultProfile <IAzureContextContainer>] [-WhatIf] [-Confirm] [<CommonParameters>]
+```
+
 ### ByObjectParameterSet
 ```
 Enable-AzCdnCustomDomainHttps -InputObject <PSCustomDomain> [-PassThru]
  [-DefaultProfile <IAzureContextContainer>] [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
+### ByObjectUserManagedParameterSet
+```
+Enable-AzCdnCustomDomainHttps -InputObject <PSCustomDomain> -UserManagedCertKeyVaultResourceId <String>
+ -UserManagedCertSecretId <String> [-PassThru] [-DefaultProfile <IAzureContextContainer>] [-WhatIf] [-Confirm]
+ [<CommonParameters>]
+```
+
 ### ByResourceIdParameterSet
 ```
 Enable-AzCdnCustomDomainHttps -ResourceId <String> [-PassThru] [-DefaultProfile <IAzureContextContainer>]
  [-WhatIf] [-Confirm] [<CommonParameters>]
+```
+
+### ByResourceIdUserManagedParameterSet
+```
+Enable-AzCdnCustomDomainHttps -ResourceId <String> -UserManagedCertKeyVaultResourceId <String>
+ -UserManagedCertSecretId <String> [-PassThru] [-DefaultProfile <IAzureContextContainer>] [-WhatIf] [-Confirm]
+ [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -50,7 +71,7 @@ Azure CDN custom domain display name.
 
 ```yaml
 Type: System.String
-Parameter Sets: ByFieldsParameterSet
+Parameter Sets: ByFieldsParameterSet, ByFieldsUserManagedParameterSet
 Aliases:
 
 Required: True
@@ -80,7 +101,7 @@ Azure CDN endpoint name.
 
 ```yaml
 Type: System.String
-Parameter Sets: ByFieldsParameterSet
+Parameter Sets: ByFieldsParameterSet, ByFieldsUserManagedParameterSet
 Aliases:
 
 Required: True
@@ -95,7 +116,7 @@ The custom domain object.
 
 ```yaml
 Type: Microsoft.Azure.Commands.Cdn.Models.CustomDomain.PSCustomDomain
-Parameter Sets: ByObjectParameterSet
+Parameter Sets: ByObjectParameterSet, ByObjectUserManagedParameterSet
 Aliases:
 
 Required: True
@@ -125,7 +146,7 @@ Azure CDN profile name.
 
 ```yaml
 Type: System.String
-Parameter Sets: ByFieldsParameterSet
+Parameter Sets: ByFieldsParameterSet, ByFieldsUserManagedParameterSet
 Aliases:
 
 Required: True
@@ -140,7 +161,7 @@ The resource group of the Azure CDN profile
 
 ```yaml
 Type: System.String
-Parameter Sets: ByFieldsParameterSet
+Parameter Sets: ByFieldsParameterSet, ByFieldsUserManagedParameterSet
 Aliases:
 
 Required: True
@@ -155,13 +176,43 @@ ResourceId of the Custom Domain
 
 ```yaml
 Type: System.String
-Parameter Sets: ByResourceIdParameterSet
+Parameter Sets: ByResourceIdParameterSet, ByResourceIdUserManagedParameterSet
 Aliases:
 
 Required: True
 Position: Named
 Default value: None
 Accept pipeline input: True (ByPropertyName)
+Accept wildcard characters: False
+```
+
+### -UserManagedCertKeyVaultResourceId
+The ResourceId of the KeyVault where the user-managed certificate is stored. Required if UserManagedCertSecretId is set.
+
+```yaml
+Type: System.String
+Parameter Sets: ByFieldsUserManagedParameterSet, ByObjectUserManagedParameterSet, ByResourceIdUserManagedParameterSet
+Aliases: VaultResourceId
+
+Required: True
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -UserManagedCertSecretId
+The SecretId of the user-managed certificate secret in key-vault. If not provided, a CDN managed certificate will be used.
+
+```yaml
+Type: System.String
+Parameter Sets: ByFieldsUserManagedParameterSet, ByObjectUserManagedParameterSet, ByResourceIdUserManagedParameterSet
+Aliases: CertSecretId
+
+Required: True
+Position: Named
+Default value: None
+Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
